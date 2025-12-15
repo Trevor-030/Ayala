@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Happy Birthday Ayala ✨</title>
+<style>
+  :root{
+    --bg:#050006;
+    --neon-pink:#ff39a8;
+    --neon-blue:#00eaff;
+    --glass: rgba(255,255,255,0.03);
+    --card-size: min(360px, 42vw);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background:
+      radial-gradient(circle at 10% 10%, rgba(0,234,255,0.03), transparent 8%),
+      linear-gradient(180deg,#030105 0%,#07030a 100%);
+    color:#fff;
+    /* allow vertical scrolling on small screens so content doesn't overflow-hidden */
+    overflow-y:auto;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding-bottom:40px;
+  }
+
+  /* Loader */
+  #loader{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background: linear-gradient(180deg, rgba(5,0,6,0.95), rgba(5,0,6,0.75));
+    z-index:9999; flex-direction:column; gap:12px;
+  }
+  .logo{ width:90px;height:90px;border-radius:50%;
+    background:conic-gradient(var(--neon-pink),var(--neon-blue));
+    display:flex;align-items:center;justify-content:center;font-weight:800;color:#050006;font-size:20px;
+    box-shadow:0 0 30px rgba(255,57,168,0.12);
+  }
+  .loader-text{ color:rgba(255,255,255,0.85); font-size:14px }
+
+  header{
+    position:fixed; left:0; right:0; top:14px; z-index:60; pointer-events:none;
+    display:flex; justify-content:space-between; padding:0 16px;
+  }
+  .left, .right{display:flex; gap:10px; align-items:center; pointer-events:auto}
+  .brand{ color:var(--neon-pink); font-weight:700; text-shadow:0 0 8px rgba(255,57,168,0.12) }
+
+  /* music + confetti buttons */
+  .btn{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 12px; border-radius:12px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.04); color:#fff; cursor:pointer;
+    box-shadow: 0 8px 22px rgba(0,0,0,0.6);
+    font-weight:600; font-size:14px;
+  }
+
+  /* Hero */
+  .hero{ margin-top:10vh; text-align:center; z-index:10; pointer-events:none; padding: 10px 16px 6px; }
+  .title{
+    font-size:clamp(28px,6vw,56px); font-weight:800; letter-spacing:-1px;
+    background:linear-gradient(90deg,var(--neon-pink),var(--neon-blue));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 24px rgba(255,57,168,0.12);
+  }
+  .subtitle{ margin-top:8px; color:rgba(255,255,255,0.88); font-size:clamp(13px,2.2vw,18px) }
+
+  .neon-heart{
+    position:absolute; left:50%; top:-18%;
+    transform:translateX(-50%); width:260px;height:260px; pointer-events:none;
+    opacity:0.12; filter:blur(12px); mix-blend-mode:screen; z-index:-1;
+    animation:heart-pulse 3.2s ease-in-out infinite;
+  }
+  @keyframes heart-pulse{
+    0%{transform:translateX(-50%) scale(.92); opacity:.08}
+    50%{transform:translateX(-50%) scale(1); opacity:.18}
+    100%{transform:translateX(-50%) scale(.92); opacity:.08}
+  }
+
+  /* Carousel container */
+  .carousel-wrap{ display:flex; justify-content:center; margin-top:4vh; z-index:20; pointer-events:auto; padding: 6px 0 28px; }
+  .carousel{
+    width: min(1150px, 96%); display:flex; gap:20px; align-items:center;
+    overflow:visible; padding:18px; transition:transform .36s cubic-bezier(.2,.9,.23,1);
+  }
+
+  /* Responsive carousel for mobile: horizontal scroll with snap */
+  @media (max-width:920px){
+    .carousel{
+      overflow-x:auto;
+      overflow-y:hidden;
+      padding: 12px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      gap:14px;
+    }
+    .carousel::-webkit-scrollbar{ height:8px }
+    .carousel::-webkit-scrollbar-thumb{ background:rgba(255,255,255,0.06); border-radius:8px }
+  }
+
+  /* Card style (responsive) */
+  .card{
+    width: var(--card-size); height: var(--card-size);
+    min-width: var(--card-size); min-height: var(--card-size);
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:16px; border: 2.5px solid rgba(255,255,255,0.03);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+    overflow:hidden; display:flex; flex-direction:column; cursor:grab; user-select:none;
+    transition: transform .34s cubic-bezier(.2,.9,.23,1), box-shadow .34s;
+    position:relative;
+    flex: 0 0 auto;
+  }
+  .card:active{ cursor:grabbing }
+  .card.center{ transform:translateY(-8px) scale(1.06); box-shadow:0 30px 80px rgba(0,0,0,0.7) }
+
+  /* neon square border */
+  .card:before{
+    content:""; position:absolute; inset:0;
+    border-radius:14px; pointer-events:none;
+    transition: box-shadow .34s;
+  }
+  .card.center:before{
+    box-shadow: 0 0 40px 6px rgba(0,234,255,0.06), inset 0 0 80px rgba(255,57,168,0.02);
+    filter: drop-shadow(0 0 28px rgba(0,234,255,0.12));
+  }
+
+  /* media inside card */
+  .card-media {
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    -webkit-user-drag:none;
+    user-drag:none;
+  }
+
+  /* overlay meta */
+  .meta{
+    position:absolute; left:12px; right:12px; bottom:12px;
+    background: linear-gradient(180deg, rgba(0,0,0,0.28), rgba(0,0,0,0.18));
+    padding:10px 12px; border-radius:10px; backdrop-filter: blur(6px);
+    border:1px solid rgba(255,255,255,0.03); color:#fff;
+  }
+  .meta h3{ font-size:15px; color:var(--neon-pink); margin-bottom:4px }
+  .meta p{ font-size:13px; opacity:0.95 }
+
+  /* arrows */
+  .arrow{
+    position:absolute; top:50%; transform:translateY(-50%); width:46px;height:46px;border-radius:12px;
+    display:flex;align-items:center;justify-content:center; cursor:pointer; z-index:50;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border:1px solid rgba(255,255,255,0.04); box-shadow:0 12px 28px rgba(0,0,0,0.6);
+  }
+  .arrow.left{ left:12px }
+  .arrow.right{ right:12px }
+
+  /* bottom message */
+  .messages{
+    position:fixed; left:50%; transform:translateX(-50%); bottom:28px; z-index:70; pointer-events:none;
+    width:min(920px,94%); display:flex; justify-content:center;
+  }
+  .msg{
+    background: linear-gradient(180deg, rgba(0,0,0,0.5), rgba(0,0,0,0.28));
+    padding:10px 18px; border-radius:999px; font-weight:700; font-size:14px;
+    color:#fff; border:1px solid rgba(255,255,255,0.04); opacity:0; transform:translateY(8px) scale(.98);
+    transition:all .38s cubic-bezier(.2,.9,.23,1);
+  }
+  .msg.show{ opacity:1; transform:translateY(0) scale(1) }
+
+  /* confetti canvas */
+  #confettiCanvas{ position:fixed; inset:0; z-index:999; pointer-events:none }
+
+  /* mobile tweaks */
+  @media (max-width:720px){
+    :root{ --card-size: min(70vw, 320px) }
+    .arrow{ width:40px;height:40px }
+    header{ top:10px }
+    .loader-text{ font-size:13px }
+    /* Make carousel cards take majority of viewport width for phone */
+    .carousel > .card{ flex: 0 0 80%; scroll-snap-align:center; max-width: 420px; height: auto; aspect-ratio: 3/4; }
+    .card { height: auto; aspect-ratio: 3/4; }
+    .card-media { height: 100%; width:100%; }
+  }
+
+  /* Desktop: keep original square sizing */
+  @media (min-width:921px){
+    .carousel > .card{ flex: 0 0 var(--card-size); scroll-snap-align:unset; }
+    .card { height: var(--card-size); }
+    .card-media { height: 100%; }
+  }
+
+</style>
+</head>
+<body>
+
+<!-- Loader -->
+<div id="loader" aria-hidden="false">
+  <div class="logo">E 💖</div>
+  <div class="loader-text">Getting Ayala's Neon Surprise ready…</div>
+</div>
+
+<!-- Header controls -->
+<header>
+  <div class="left">
+    <div class="brand">Ayala • Birthday</div>
+  </div>
+  <div class="right">
+    <button id="musicBtn" class="btn" aria-pressed="false" title="Play / Pause music">
+      <svg id="musicIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" style="display:block">
+        <path d="M9 19V5l12-2v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span id="musicLabel">Pause</span>
+    </button>
+    <button id="confettiBtn" class="btn" title="Pop confetti">🎉 Pop</button>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero" role="banner">
+  <svg class="neon-heart" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <radialGradient id="g1" cx="50%" cy="40%">
+        <stop offset="0%" stop-color="var(--neon-pink)" stop-opacity="1"/>
+        <stop offset="50%" stop-color="var(--neon-blue)" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+      </radialGradient>
+    </defs>
+    <path d="M100 170 L30 110 A34 34 0 0 1 60 50 A44 44 0 0 1 100 80 A44 44 0 0 1 140 50 A34 34 0 0 1 170 110 Z" fill="url(#g1)"/>
+  </svg>
+
+  <h1 class="title">Happy Birthday, Ayala</h1>
+  <div class="subtitle">Hear Me Calling — a special vibe for your day ✨</div>
+</section>
+
+<!-- Carousel -->
+<div class="carousel-wrap" aria-roledescription="carousel">
+  <div class="arrow left" id="arrowLeft" title="Previous" aria-hidden="false">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M15 18l-6-6 6-6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+
+  <div class="carousel" id="carousel">
+    <!-- Images & videos (all inside the carousel now) -->
+    <div class="card">
+      <img class="card-media" src="pic2.jpg" alt="Ayala - photo 1">
+      <div class="meta"><h3>Ayala</h3><p>May your day be full of music & love 💖</p></div>
+    </div>
+
+    <div class="card">
+      <img class="card-media" src="pic1.jpg" alt="Ayala - photo 2">
+      <div class="meta"><h3>Celebrate</h3><p>Friends, vibes, and memories forever.</p></div>
+    </div>
+
+    <div class="card">
+      <img class="card-media" src="pic3.jpg" alt="Ayala - photo 3">
+      <div class="meta"><h3>Didn't Forget</h3><p>to add ur favorite, honestly i was supposed to put a pic here. ✨</p></div>
+    </div>
+
+    <div class="card">
+      <video class="card-media" autoplay muted loop playsinline>
+        <source src="video.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="meta">
+        <h3>Celebrate</h3>
+        <p>Friends, vibes, and memories forever.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <video class="card-media" autoplay muted loop playsinline>
+        <source src="video1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+      <div class="meta">
+        <h3>Celebrate</h3>
+        <p>Friends, vibes, and memories forever.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrow right" id="arrowRight" title="Next" aria-hidden="false">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+</div>
+
+<!-- bottom messages -->
+<div class="messages" aria-live="polite">
+  <div id="msg" class="msg">Wishing you an unforgettable day, Ayala ✨</div>
+</div>
+
+<!-- confetti canvas -->
+<canvas id="confettiCanvas" width="1" height="1" aria-hidden="true"></canvas>
+
+<!-- audio (place hear_me_calling.mp3 in same folder) -->
+<audio id="bgAudio" loop preload="auto">
+  <source src="music.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+/* Helpers */
+const $ = s => document.querySelector(s);
+const $$ = s => Array.from(document.querySelectorAll(s));
+
+/* Loader */
+window.addEventListener('load', () => {
+  setTimeout(()=> {
+    const l = $('#loader');
+    if(l){
+      l.style.transition = 'opacity .6s ease';
+      l.style.opacity = '0';
+      setTimeout(()=> l.remove(), 700);
+    }
+    tryAutoPlay();
+  }, 700);
+});
+
+/* Audio controls & autoplay fallback */
+const audio = $('#bgAudio');
+const musicBtn = $('#musicBtn');
+const musicLabel = $('#musicLabel');
+
+function tryAutoPlay(){
+  if(!audio) return;
+  audio.play().then(()=> {
+    musicBtn.setAttribute('aria-pressed','true');
+    musicLabel.textContent = 'Pause';
+  }).catch(()=> {
+    musicBtn.setAttribute('aria-pressed','false');
+    musicLabel.textContent = 'Play';
+  });
+}
+if(musicBtn){
+  musicBtn.addEventListener('click', ()=> {
+    if(!audio) return;
+    if(audio.paused){ audio.play(); musicBtn.setAttribute('aria-pressed','true'); musicLabel.textContent='Pause'; }
+    else { audio.pause(); musicBtn.setAttribute('aria-pressed','false'); musicLabel.textContent='Play'; }
+  });
+}
+
+/* Carousel logic (square/portrait style) */
+const carousel = $('#carousel');
+let isDown=false, startX=0, scrollLeft=0;
+const cards = ()=> $$('.card');
+
+function centerActive(idx){
+  const all = cards();
+  if(!all[idx] || !carousel) return;
+  const containerWidth = carousel.clientWidth;
+  const card = all[idx];
+  const targetCenter = card.offsetLeft + card.offsetWidth/2;
+  const scrollTo = Math.max(0, targetCenter - containerWidth/2);
+  carousel.scrollTo({ left: scrollTo, behavior: 'smooth' });
+  all.forEach((c,i)=> c.classList.toggle('center', i===idx));
+}
+
+let currentIndex = 0;
+function showNext(){ currentIndex = Math.min(cards().length-1, currentIndex+1); centerActive(currentIndex); }
+function showPrev(){ currentIndex = Math.max(0, currentIndex-1); centerActive(currentIndex); }
+
+/* Pointer dragging for desktop/touch */
+if(carousel){
+  carousel.addEventListener('pointerdown', (e)=>{
+    isDown = true; try{ carousel.setPointerCapture(e.pointerId); }catch(e){}
+    startX = e.clientX; scrollLeft = carousel.scrollLeft;
+    carousel.style.scrollBehavior = 'auto';
+  });
+  carousel.addEventListener('pointerup', (e)=>{
+    isDown=false; try{ carousel.releasePointerCapture(e.pointerId);}catch(e){}
+    snapToNearest();
+    carousel.style.scrollBehavior = 'smooth';
+  });
+  carousel.addEventListener('pointerleave', ()=>{ if(isDown){ isDown=false; snapToNearest(); }});
+  carousel.addEventListener('pointermove', (e)=>{
+    if(!isDown) return;
+    const dx = e.clientX - startX;
+    carousel.scrollLeft = scrollLeft - dx;
+  });
+}
+
+/* arrow buttons */
+$('#arrowLeft').addEventListener('click', ()=> { showPrev(); resetAutoplayTimer(); });
+$('#arrowRight').addEventListener('click', ()=> { showNext(); resetAutoplayTimer(); });
+
+/* snap to nearest card */
+function snapToNearest(){
+  const all = cards();
+  if(!carousel || all.length===0) return;
+  const containerWidth = carousel.clientWidth;
+  const scrollLeftNow = carousel.scrollLeft;
+  const viewCenter = scrollLeftNow + containerWidth/2;
+  let distances = all.map((c,i)=> ({i, d: Math.abs(c.offsetLeft + c.offsetWidth/2 - viewCenter)}));
+  distances.sort((a,b)=> a.d - b.d);
+  currentIndex = distances[0].i;
+  centerActive(currentIndex);
+}
+
+/* keyboard nav */
+window.addEventListener('keydown', (e)=> {
+  if(e.key === 'ArrowRight') { showNext(); resetAutoplayTimer(); }
+  if(e.key === 'ArrowLeft') { showPrev(); resetAutoplayTimer(); }
+});
+
+/* Auto-play + user swipe both */
+let autoplay = true;
+let autoplayInterval = 3000;
+let autoplayTimer = setInterval(()=> {
+  if(!autoplay) return;
+  if(currentIndex >= cards().length -1) currentIndex = -1;
+  showNext();
+}, autoplayInterval);
+
+function resetAutoplayTimer(){ autoplay = false; clearTimeout(window._resumeTimer); window._resumeTimer = setTimeout(()=> autoplay = true, 4500); }
+
+/* Re-center on resize */
+window.addEventListener('resize', ()=> centerActive(currentIndex));
+
+/* initial center after images load */
+window.addEventListener('load', ()=> setTimeout(()=> centerActive(0), 250));
+
+/* Dynamic messages */
+const messages = [
+  "Wishing you an unforgettable day, Ayala ✨",
+  "May your year be full of music, love and light 💖",
+  "Keep shining — the world needs your glow 🌟"
+];
+const msgEl = $('#msg'); let msgIdx=0;
+function cycleMessages(){
+  if(!msgEl) return;
+  msgEl.classList.remove('show');
+  setTimeout(()=> { msgIdx = (msgIdx+1) % messages.length; msgEl.textContent = messages[msgIdx]; msgEl.classList.add('show'); }, 380);
+}
+setTimeout(()=> { if(msgEl) msgEl.classList.add('show'); }, 1100);
+setInterval(cycleMessages, 4200);
+
+/* Confetti implementation */
+const confettiCanvas = $('#confettiCanvas');
+const ctx = confettiCanvas ? confettiCanvas.getContext('2d') : null;
+let confetti = [];
+function resizeCanvas(){ if(confettiCanvas){ confettiCanvas.width = innerWidth; confettiCanvas.height = innerHeight; } }
+resizeCanvas(); window.addEventListener('resize', resizeCanvas);
+
+function rand(a,b){ return a + Math.random()*(b-a); }
+function spawnConfetti(amount=80, x=innerWidth/2, y=innerHeight/2){
+  if(!ctx) return;
+  for(let i=0;i<amount;i++){
+    confetti.push({
+      x: x + rand(-80,80),
+      y: y + rand(-20,20),
+      vx: rand(-6,6),
+      vy: rand(-10,-2),
+      size: rand(6,14),
+      color: Math.random()>0.5 ? '#ff39a8' : '#00eaff',
+      rot: rand(0,360),
+      vr: rand(-8,8),
+      life: rand(60,140)
+    });
+  }
+}
+function updateConfetti(){
+  if(!ctx || !confettiCanvas) return;
+  ctx.clearRect(0,0,confettiCanvas.width, confettiCanvas.height);
+  for(let i = confetti.length-1; i >= 0; i--){
+    const p = confetti[i];
+    p.x += p.vx; p.y += p.vy; p.vy += 0.32; p.rot += p.vr; p.life--;
+    ctx.save();
+    ctx.translate(p.x,p.y);
+    ctx.rotate(p.rot*Math.PI/180);
+    ctx.fillStyle = p.color;
+    ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+    ctx.restore();
+    if(p.life<=0 || p.y > confettiCanvas.height+40) confetti.splice(i,1);
+  }
+  requestAnimationFrame(updateConfetti);
+}
+updateConfetti();
+
+$('#confettiBtn').addEventListener('click', (e)=> {
+  // spawn from top-right button on click
+  const rect = e.target.getBoundingClientRect();
+  spawnConfetti(140, rect.left + rect.width/2, rect.top + rect.height/2);
+});
+document.addEventListener('click', (e)=> { if (e.target.closest('.btn, header, .arrow')) return; spawnConfetti(40, e.clientX, e.clientY); });
+
+/* Ambient soft blobs */
+(function ambient(){
+  const count = Math.min(8, Math.floor(innerWidth/140));
+  for(let i=0;i<count;i++){
+    const d = document.createElement('div');
+    d.style.position='fixed';
+    d.style.left = Math.random()*100 + '%';
+    d.style.top = Math.random()*100 + '%';
+    const s = Math.random()*60+20;
+    d.style.width = s+'px'; d.style.height = s+'px';
+    d.style.borderRadius='50%';
+    d.style.filter='blur(22px)'; d.style.opacity='0.12'; d.style.zIndex=1; d.style.pointerEvents='none';
+    d.style.background = Math.random()>0.5 ? 'radial-gradient(circle, rgba(255,57,168,0.9), rgba(255,57,168,0))' : 'radial-gradient(circle, rgba(0,234,255,0.9), rgba(0,234,255,0))';
+    document.body.appendChild(d);
+    d.animate([{transform:'translateY(0)'},{transform:'translateY(-40px)'}], {duration:rand(3000,8000), direction:'alternate', iterations:Infinity, easing:'ease-in-out'});
+  }
+})();
+
+/* image error fallback and initial center */
+window.addEventListener('load', ()=> {
+  $$('img').forEach(img=>{
+    img.addEventListener('error', ()=> {
+      img.src = 'data:image/svg+xml;utf8,' + encodeURIComponent(
+        `<svg xmlns='http://www.w3.org/2000/svg' width='800' height='800' viewBox='0 0 800 800'>
+           <rect width='100%' height='100%' fill='#0b0b0f'/>
+           <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#444' font-family='Arial' font-size='28'>Add your photo: ${img.alt}</text>
+         </svg>`);
+    });
+  });
+  setTimeout(()=> centerActive(0), 220);
+});
+
+/* Accessibility: allow Enter to attempt play */
+document.addEventListener('keydown', (e)=> { if(e.key==='Enter') tryAutoPlay(); });
+
+</script>
+
+<!-- USAGE NOTES:
+1) Put your vertical/portrait images and videos in the same folder and name them:
+   pic1.jpg, pic2.jpg, pic3.jpg, video.mp4, video1.mp4
+2) Put the audio file named: hear_me_calling.mp3
+3) On phones you can swipe the carousel horizontally. The cards will snap to center.
+-->
+
+</body>
+</html>
